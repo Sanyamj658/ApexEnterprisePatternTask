@@ -1,15 +1,16 @@
-
 import { LightningElement, track, wire } from "lwc";
 import getProjects from "@salesforce/apex/ProjectTrackerController.getProjects";
 import getTasksByProject from "@salesforce/apex/ProjectTrackerController.getTasksByProject";
 import createTimeEntry from "@salesforce/apex/ProjectTrackerController.createTimeEntry";
-import getUsers from "@salesforce/apex/ProjectTrackerController.getUsers";
 import getRecords from '@salesforce/apex/ProjectTrackerController.getRecords';
-//import jsPDF from 'c/jspdf';
+import jsAutoTable from '@salesforce/resourceUrl/jsPdfAutoTable';
+import jsPdfUmd from '@salesforce/resourceUrl/jsPdfUmd';
+import { loadScript } from 'lightning/platformResourceLoader';
+import getFavTasks from '@salesforce/apex/ProjectTrackerController.getFavTasks';
 
 
 
-export default class taskManager extends LightningElement {
+export default class TaskManager extends LightningElement {
   @track isModalOpen = false;
   @track projectOptions = [];
   @track taskOptions = [];
@@ -25,6 +26,44 @@ export default class taskManager extends LightningElement {
   @track startDate;
   @track endDate;
   data = [];
+//   favTasks;    
+//   error;
+
+//   col = [
+//     { label: 'FavTask Name', fieldName: 'Name' },
+//     { label: 'Task Name', fieldName: 'TaskName__r.Name' },
+//     { label: 'Created By', fieldName: 'User__r.Name' }
+// ];
+
+@track favTasks = []; // Holds the fetched records
+@track col = [
+    { label: 'Project', fieldName: 'Project__r.Name', editable: false },
+    { label: 'Task Name', fieldName: 'TaskName__r.Name', editable: false },
+    { label: 'Date', type: 'date', editable: true },
+    { label: 'Start Time', type: 'Time', editable: true },
+    { label: 'End Time', type: 'Time', editable: true },
+    { label: 'Description', fieldName: 'Description__c', editable: true }
+];
+@track draftValues = [];
+
+
+  @wire(getFavTasks)
+  wiredFavTasks({ error, data }) {
+      if (data) {
+        console.log('Wire service data:', data);
+          this.favTasks = data;
+          console.log('the fav task is ', this.favTasks);
+          
+          this.error = undefined;
+      } else if (error) {
+          this.error = error;
+          this.favTasks = undefined;
+      }
+  }
+
+  connectedCallback() {
+    this.fetchData();  
+}
   
   handleStartDateChange(event) {
     this.startDate = event.target.value;
@@ -33,6 +72,27 @@ export default class taskManager extends LightningElement {
   handleEndDateChange(event) {
     this.endDate = event.target.value;
   }
+
+  jsPDFInitialized = false;
+  jsPDFAutoTableInitialized = false;
+
+  renderedCallback(){
+    if (!this.jsPdfInitialized) {
+        this.jsPdfInitialized = true;
+        loadScript(this, jsPdfUmd)
+            .then(() => {
+                console.log('jsPDF library loaded successfully');
+                return loadScript(this, jsAutoTable);
+            })
+            .then(() => {
+                console.log('autoTable plugin loaded successfully');
+                this.jsPdfAutoTableInitialized = true;
+            })
+            .catch((error) => {
+                console.error('Error loading jsPDF or autoTable:', error);
+            });
+    }
+}
 
     //-------------------- Create the Data Table ------------------------------------>
    @track columns = [
@@ -52,17 +112,21 @@ export default class taskManager extends LightningElement {
       { label: 'Description', fieldName: 'Description__c', type: 'text' }
     ];
 
-  @wire(getRecords,{startDate : '$startDate', endDate :  '$endDate'}) account({error,data})
-  {
-      if(data)
-      {
-          this.data = data;
 
-      }
-      else if(error){
-          this.error = error;
-      }
-  }
+
+
+
+  fetchData() {
+    getRecords({ startDate: this.startDate, endDate: this.endDate })
+        .then(result => {
+            this.data = result;
+            this.error = undefined;
+        })
+        .catch(err => {
+            this.error = err;
+            this.data = undefined;
+        });
+}
 
   
   @wire(getProjects)
@@ -76,18 +140,8 @@ export default class taskManager extends LightningElement {
       console.error(error);
     }
   }
+  
 
-  @wire(getUsers)
-  wiredUsers({ error, data }) {
-    if (data) {
-      this.userOptions = data.map((user) => ({
-        label: user.Name,
-        value: user.Id
-      }));
-    } else if (error) {
-      console.error(error);
-    }
-  }
 
   handleProjectChange(event) {
     this.selectedProject = event.detail.value;
@@ -183,15 +237,46 @@ export default class taskManager extends LightningElement {
     this.isModalOpen = false;
   }
 
-  downloadPdf() {
-    if (this.startDate && this.endDate) {
-        const startDateParam = encodeURIComponent(this.startDate);
-        const endDateParam = encodeURIComponent(this.endDate);
-        window.download(strFile, "sample.pdf", "application/pdf");
-        //window.open(`/apex/YourPdfPageName?startDate=${startDateParam}&endDate=${endDateParam}`, '_blank');
-    } else {
-        console.warn('Please select both start and end dates.');
-    }
-}
+  downloadPdf(){
+    console.log('inside generateDataInPdf2');
+    if (this.jsPdfInitialized && this.jsPdfAutoTableInitialized) {
+        try {
+            const {jsPDF} = window.jspdf;
 
+    const doc = new jsPDF();
+    if(this.data.length === 0) {
+        this.showToast('No Data', 'There is no data available for PDF generation.', 'info');
+        return;
+    }
+
+    
+    doc.setFontSize(18);
+    doc.text("Task Report", 20, 20);
+    doc.setFontSize(12);
+    
+   
+    const headers = ['Project Name', 'Task Name', 'Date', ' StartTime', 'EndTime', 'Description'];
+    const rows = this.data.map(task => [
+        task.projectName__c,
+        task.TaskList__c,
+        task.Date__c,
+        task.From_Time__c,
+        task.To_Time__c,
+        task.Description__c
+    ]);
+    doc.autoTable({
+        head: [headers],
+        body: rows,
+        startY: 30, 
+    });
+   
+    doc.save('Task_Report.pdf');
+    
+}catch (error) {
+        console.log('Error in generating PDF', JSON.stringify(error));
+    }
+} else {
+    console.error('jsPDF library is not loaded');
+}
+}
 }

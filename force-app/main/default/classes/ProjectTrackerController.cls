@@ -2,11 +2,11 @@
  * @description       : 
  * @author            : ChangeMeIn@UserSettingsUnder.SFDoc
  * @group             : 
- * @last modified on  : 11-06-2024
+ * @last modified on  : 11-11-2024
  * @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
 **/
 public with sharing class ProjectTrackerController {
-    
+
     //Fetch all the Project
     @AuraEnabled(cacheable=true)
     public static List<Project__c> getProjects() {
@@ -37,6 +37,7 @@ public with sharing class ProjectTrackerController {
             throw new AuraHandledException('Task not found.');
         }
     }
+    
     //fetch the user 
     @AuraEnabled(cacheable=true)
     public static List<User> getUsers() {
@@ -47,12 +48,24 @@ public with sharing class ProjectTrackerController {
     //DataTable Data
     @AuraEnabled(cacheable=true)
     public static List<Time_Entry__c> getRecords(Date startDate, Date endDate) {
-        DateTime currentDateTimeGMT = System.now();
-        System.debug('Current Date and Time in GMT: ' + currentDateTimeGMT);
+            if(startDate == null && endDate == null){
+                Date myDate = Date.today();
+                 startDate = myDate.toStartofWeek();
+                 endDate = myDate.toStartofWeek().addDays(6);
+                
+            }
         return [
             SELECT  projectName__c, TaskList__c, Date__c, From_Time__c, To_Time__c, Description__c
             FROM Time_Entry__c
             WHERE Date__c >= :startDate AND Date__c <= :endDate
         ];
     }
+
+    @AuraEnabled(cacheable=true)
+    public static List<FavroiteTask__c> getFavTasks() {
+        Id userId = UserInfo.getUserId(); 
+        return [SELECT Id, Name, TaskList__r.Name, User__r.Name, Project__c FROM FavroiteTask__c WHERE User__c = :userId];
+    }
+    
+
 }

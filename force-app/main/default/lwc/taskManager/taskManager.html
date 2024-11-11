@@ -2,141 +2,161 @@
   @description       : 
   @author            : ChangeMeIn@UserSettingsUnder.SFDoc
   @group             : 
-  @last modified on  : 11-06-2024
+  @last modified on  : 11-11-2024
   @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
 -->
 <template>
-    <lightning-card title="Project1 user Task Manager">
-      <lightning-button label="Add Time Log" onclick={openModal}></lightning-button>
-  
-      <template if:true={isModalOpen}>
-        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
-          <div class="slds-modal__container">
-            <div class="slds-modal__header">
-              <button
-                class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
-                title="Close"
-                onclick={closeModal}
-              >
-                <lightning-icon
-                  icon-name="utility:close"
-                  alternative-text="close"
-                  size="small"
-                ></lightning-icon>
-                <span class="slds-assistive-text">Close</span>
-              </button>
-              <h2 class="slds-text-heading_medium">Add Time Log</h2>
-            </div>
-            <div class="slds-modal__content slds-p-around_medium">
-              <lightning-combobox
-                name="projects"
-                label="Select Project"
-                value={selectedProject}
-                options={projectOptions}
-                onchange={handleProjectChange}
-              ></lightning-combobox>
-  
-              <template if:true={selectedProject}>
-                <lightning-combobox
-                  name="tasks"
-                  label="Select Task"
-                  value={selectedTask}
-                  options={taskOptions}
-                  onchange={handleTaskChange}
-                ></lightning-combobox>
-  
-                <template if:true={isAddingNewTask}>
-                  <lightning-input
-                    label="New Task"
-                    value={newTask}
-                    onchange={handleNewTaskChange}
-                    placeholder="Enter a new task"
-                    class="slds-m-top_small"
-                  ></lightning-input>
-                </template>
-  
-                <div class="slds-grid slds-grid_align-spread slds-m-top_small">
-                  <div class="slds-col">
-                    <lightning-input
-                      type="date"
-                      label="Date"
-                      value={logDate}
-                      onchange={handleDateChange}
-                    ></lightning-input>
-                  </div>
-                  <div class="slds-col">
-                    <lightning-combobox
-                      name="users"
-                      label="Select User"
-                      value={selectedUser}
-                      options={userOptions}
-                      onchange={handleUserChange}
-                    ></lightning-combobox>
-                  </div>
-                </div>
-  
-                <div class="slds-grid slds-grid_align-spread slds-m-top_small">
-                  <div class="slds-col">
-                    <lightning-input
-                      label="Start Time"
-                      value={startTime}
-                      onchange={handleStartTimeChange}
-                    ></lightning-input>
-                  </div>
-                  <div class="slds-col">
-                    <lightning-input
-                      type="time"
-                      label="End Time"
-                      value={endTime}
-                      onchange={handleEndTimeChange}
-                    ></lightning-input>
-                  </div>
-                </div>
-  
-                <lightning-textarea
-                  label="Description"
-                  value={description}
-                  onchange={handleDescriptionChange}
-                  placeholder="Enter a description"
-                  class="slds-m-top_small"
-                ></lightning-textarea>
-              </template>
-            </div>
-            <div class="slds-modal__footer">
-              <lightning-button
-                variant="neutral"
-                label="Cancel"
-                onclick={closeModal}
-              ></lightning-button>
-              <lightning-button
-                variant="brand"
-                label="Save"
-                onclick={saveTimeLog}
-              ></lightning-button>
-            </div>
+  <lightning-card title="Project user Task Manager">
+    <lightning-button
+      label="Add Time Log"
+      onclick={openModal}
+    ></lightning-button>
+
+    <template if:true={isModalOpen}>
+      <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+        <div class="slds-modal__container">
+          <div class="slds-modal__header">
+            <button
+              class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
+              title="Close"
+              onclick={closeModal}
+            >
+              <lightning-icon
+                icon-name="utility:close"
+                alternative-text="close"
+                size="small"
+              ></lightning-icon>
+              <span class="slds-assistive-text">Close</span>
+            </button>
+            <h2 class="slds-text-heading_medium">Add Time Log</h2>
           </div>
-        </section>
-        <div class="slds-backdrop slds-backdrop_open"></div>
-      </template>
-  
-    </lightning-card>
-  
-    <!--Fetching the data -->
-  
-    <lightning-card title="Fetch Data" icon-name="custom:custom14">
-      <div class="slds-m-around_medium">
-          <lightning-input type="date" label="Start Date" value={startDate} onchange={handleStartDateChange}></lightning-input>
-          <lightning-input type="date" label="End Date" value={endDate} onchange={handleEndDateChange}></lightning-input>
-          <lightning-button label="Fetch" onclick={fetchData}></lightning-button>
-      </div>
-      <lightning-datatable
+          <div class="slds-modal__content slds-p-around_medium">
+            <lightning-combobox
+              name="projects"
+              label="Select Project"
+              value={selectedProject}
+              options={projectOptions}
+              onchange={handleProjectChange}
+            ></lightning-combobox>
+
+            <template if:true={selectedProject}>
+              <lightning-combobox
+                name="tasks"
+                label="Select Task"
+                value={selectedTask}
+                options={taskOptions}
+                onchange={handleTaskChange}
+              ></lightning-combobox>
+
+              <template if:true={isAddingNewTask}>
+                <lightning-input
+                  label="New Task"
+                  value={newTask}
+                  onchange={handleNewTaskChange}
+                  placeholder="Enter a new task"
+                  class="slds-m-top_small"
+                ></lightning-input>
+              </template>
+
+              <div class="slds-grid slds-grid_align-spread slds-m-top_small">
+                <div class="slds-col">
+                  <lightning-input
+                    type="date"
+                    label="Date"
+                    value={logDate}
+                    onchange={handleDateChange}
+                  ></lightning-input>
+                </div>
+              </div>
+
+              <div class="slds-grid slds-grid_align-spread slds-m-top_small">
+                <div class="slds-col">
+                  <lightning-input
+                    type="time"
+                    label="Start Time"
+                    value={startTime}
+                    onchange={handleStartTimeChange}
+                  ></lightning-input>
+                </div>
+                <div class="slds-col">
+                  <lightning-input
+                    type="time"
+                    label="End Time"
+                    value={endTime}
+                    onchange={handleEndTimeChange}
+                  ></lightning-input>
+                </div>
+              </div>
+
+              <lightning-textarea
+                label="Description"
+                value={description}
+                onchange={handleDescriptionChange}
+                placeholder="Enter a description"
+                class="slds-m-top_small"
+              ></lightning-textarea>
+            </template>
+          </div>
+          <div class="slds-modal__footer">
+            <lightning-button
+              variant="neutral"
+              label="Cancel"
+              onclick={closeModal}
+            ></lightning-button>
+            <lightning-button
+              variant="brand"
+              label="Save"
+              onclick={saveTimeLog}
+            ></lightning-button>
+          </div>
+        </div>
+      </section>
+      <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+  </lightning-card>
+<!-- 
+  <lightning-datatable
+  data={favTasks}
+  columns={col}
+  key-field="Id">
+  draft-values={draftValues}
+</lightning-datatable> -->
+
+<lightning-datatable
+key-field="id"
+data={favTasks}
+columns={col}
+onsave={handleSave}
+
+hide-checkbox-column="true"
+></lightning-datatable>
+
+  <lightning-card title="Fetch Data" icon-name="custom:custom14">
+    <div class="slds-m-around_medium">
+      <lightning-input
+        type="date"
+        label="Start Date"
+        value={startDate}
+        onchange={handleStartDateChange}
+      ></lightning-input>
+      <lightning-input
+        type="date"
+        label="End Date"
+        value={endDate}
+        onchange={handleEndDateChange}
+      ></lightning-input>
+      <lightning-button label="Fetch" onclick={fetchData}></lightning-button>
+    </div>
+    <lightning-datatable
       data={data}
       columns={columns}
       key-field="Id"
       class="slds-m-top_medium"
     ></lightning-datatable>
-    <lightning-button label="Download PDF" onclick={downloadPdf}></lightning-button>
-  
-    </lightning-card>
-  </template>
-  
+    <lightning-button
+      label="Download PDF"
+      onclick={downloadPdf}
+    ></lightning-button>
+
+  </lightning-card>
+</template>
