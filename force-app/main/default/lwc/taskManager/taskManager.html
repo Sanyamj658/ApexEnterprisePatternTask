@@ -2,15 +2,18 @@
   @description       : 
   @author            : ChangeMeIn@UserSettingsUnder.SFDoc
   @group             : 
-  @last modified on  : 11-11-2024
+  @last modified on  : 11-13-2024
   @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
 -->
 <template>
-  <lightning-card title="Project user Task Manager">
+<lightning-card title="Project 1 user Task Manager">
+<div slot="actions">
     <lightning-button
       label="Add Time Log"
       onclick={openModal}
+      class="slds-button slds-button_neutral"
     ></lightning-button>
+  </div>
 
     <template if:true={isModalOpen}>
       <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
@@ -122,31 +125,39 @@
   draft-values={draftValues}
 </lightning-datatable> -->
 
-<lightning-datatable
+<lightning-datatable title="Favorite Task"
 key-field="id"
 data={favTasks}
 columns={col}
 onsave={handleSave}
-
 hide-checkbox-column="true"
+draft-values={draftValues}
 ></lightning-datatable>
 
-  <lightning-card title="Fetch Data" icon-name="custom:custom14">
-    <div class="slds-m-around_medium">
-      <lightning-input
-        type="date"
-        label="Start Date"
-        value={startDate}
-        onchange={handleStartDateChange}
-      ></lightning-input>
-      <lightning-input
-        type="date"
-        label="End Date"
-        value={endDate}
-        onchange={handleEndDateChange}
-      ></lightning-input>
-      <lightning-button label="Fetch" onclick={fetchData}></lightning-button>
-    </div>
+</br>
+<lightning-card title="Fetch Data" icon-name="custom:custom14">
+<div class="slds-grid slds-gutters slds-m-around_medium">
+  <div class="slds-col slds-size_1-of-3">
+    <lightning-input
+      type="date"
+      label="Start Date"
+      value={startDate}
+      onchange={handleStartDateChange}
+    ></lightning-input>
+  </div>
+  <div class="slds-col slds-size_1-of-3">
+    <lightning-input
+      type="date"
+      label="End Date"
+      value={endDate}
+      onchange={handleEndDateChange}
+    ></lightning-input>
+  </div>
+  <div class="slds-col slds-align_absolute-center slds-size_1-of-3">
+    <lightning-button label="Fetch" onclick={fetchData}></lightning-button>
+  </div>
+</div>
+
     <lightning-datatable
       data={data}
       columns={columns}
@@ -157,6 +168,5 @@ hide-checkbox-column="true"
       label="Download PDF"
       onclick={downloadPdf}
     ></lightning-button>
-
   </lightning-card>
 </template>

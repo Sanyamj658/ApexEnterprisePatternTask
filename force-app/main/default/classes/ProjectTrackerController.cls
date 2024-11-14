@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : ChangeMeIn@UserSettingsUnder.SFDoc
  * @group             : 
- * @last modified on  : 11-11-2024
+ * @last modified on  : 11-14-2024
  * @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
 **/
 public with sharing class ProjectTrackerController {
@@ -38,12 +38,6 @@ public with sharing class ProjectTrackerController {
         }
     }
     
-    //fetch the user 
-    @AuraEnabled(cacheable=true)
-    public static List<User> getUsers() {
-        return [SELECT Id, Name FROM User WHERE IsActive = true]; 
-    }
-
 
     //DataTable Data
     @AuraEnabled(cacheable=true)
@@ -64,8 +58,34 @@ public with sharing class ProjectTrackerController {
     @AuraEnabled(cacheable=true)
     public static List<FavroiteTask__c> getFavTasks() {
         Id userId = UserInfo.getUserId(); 
-        return [SELECT Id, Name, TaskList__r.Name, User__r.Name, Project__c FROM FavroiteTask__c WHERE User__c = :userId];
+        return [SELECT Id, Name, Task_Name__c, User__r.Name, Project__c FROM FavroiteTask__c WHERE User__c = :userId];
     }
     
+
+
+    @AuraEnabled
+    public static void createTimeEntr(List<Time_Entry__c> timeEntries) {
+        System.debug(timeEntries);
+        List<Time_Entry__c> timeEntriesToInsert = new List<Time_Entry__c>();
+        System.debug('time entries -->'+ timeEntries);
+        for (Time_Entry__c entry : timeEntries) {
+            Time_Entry__c timeEntry = new Time_Entry__c();
+            timeEntry.Name = entry.Name;
+            timeEntry.projectName__c = entry.projectName__c;
+            timeEntry.Date__c = entry.Date__c;
+            timeEntry.From_Time__c = entry.From_Time__c;
+            timeEntry.To_Time__c = entry.To_Time__c;
+            timeEntry.Description__c = entry.Description__c;
+            timeEntriesToInsert.add(timeEntry);
+        }
+
+        try {
+            insert timeEntriesToInsert;
+            System.debug('inserted successfully -->'+timeEntriesToInsert);
+        } catch (DmlException e) {
+            throw new AuraHandledException('Error saving Time Entries: ' + e.getMessage());
+        }
+    }
+
 
 }
