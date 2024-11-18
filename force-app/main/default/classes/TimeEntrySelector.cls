@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : ChangeMeIn@UserSettingsUnder.SFDoc
+ * @group             : 
+ * @last modified on  : 11-18-2024
+ * @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+**/
 public with sharing class TimeEntrySelector extends fflib_SObjectSelector {
     
     public TimeEntrySelector() {
@@ -24,6 +31,11 @@ public with sharing class TimeEntrySelector extends fflib_SObjectSelector {
     
     // Fetch time entries for a specific date range
     public List<Time_Entry__c> fetchTimeEntries(Date startDate, Date endDate) {
+        if(startDate == null && endDate == null){
+           Date myDate = Date.today();
+           startDate = myDate.toStartofWeek();
+           endDate = myDate.toStartofWeek().addDays(6);     
+            }
         String query = String.format(
             'SELECT {0} FROM {1} WHERE Date__c >= :startDate AND Date__c <= :endDate', 
             new List<String> {

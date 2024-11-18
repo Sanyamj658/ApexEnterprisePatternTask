@@ -1,13 +1,14 @@
 import { LightningElement, track, wire } from "lwc";
-import getProjects from "@salesforce/apex/ProjectTrackerController.getProjects";
-import getTasksByProject from "@salesforce/apex/ProjectTrackerController.getTasksByProject";
-import createTimeEntry from "@salesforce/apex/ProjectTrackerController.createTimeEntry";
-import createTimeEntr from "@salesforce/apex/ProjectTrackerController.createTimeEntr";
-import getRecords from '@salesforce/apex/ProjectTrackerController.getRecords';
+import getProjects from "@salesforce/apex/ProjectTaskController.getProjects";
+import getTasksByProject from "@salesforce/apex/ProjectTaskController.getTasksByProject";
+import createTimeEntry from "@salesforce/apex/ProjectTaskController.createTimeEntry";
+import getFavTasks from '@salesforce/apex/ProjectTaskController.getFavTasks';
+import createTimeEntries from "@salesforce/apex/ProjectTaskController.createTimeEntries";
+import getRecords from '@salesforce/apex/ProjectTaskController.getRecords';
 import jsAutoTable from '@salesforce/resourceUrl/jsPdfAutoTable';
 import jsPdfUmd from '@salesforce/resourceUrl/jsPdfUmd';
 import { loadScript } from 'lightning/platformResourceLoader';
-import getFavTasks from '@salesforce/apex/ProjectTrackerController.getFavTasks';
+
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 
@@ -32,7 +33,7 @@ export default class TaskManager extends LightningElement {
 @track col = [
     { label: 'Project', fieldName: 'Project__c', editable: false },
     { label: 'Task Name', fieldName: 'Task_Name__c', editable: false },
-    { label: 'Date', type: 'date-local', fieldName: 'Date__c', typeAttributes: {
+    { label: 'Date', type: 'date-local', fieldName: 'Date__c', sortable: true, typeAttributes: {
       day: "numeric",
       month: "numeric",
       year: "numeric"
@@ -68,7 +69,7 @@ handleSave(event) {
         };
 
     });
-    createTimeEntr({
+    createTimeEntries({
       timeEntries:  timeEntriesToInsert
   })
       .then((result) => {

@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : ChangeMeIn@UserSettingsUnder.SFDoc
+ * @group             : 
+ * @last modified on  : 11-18-2024
+ * @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+**/
 public with sharing class ProjectTaskController {
 
     // Constructor
@@ -6,42 +13,43 @@ public with sharing class ProjectTaskController {
     // Fetch all the projects
     @AuraEnabled(cacheable=true)
     public static List<Project__c> getProjects() {
-        ProjectTaskService projectTrackerService = new ProjectTaskService();
-        return projectTrackerService.fetchProjects();
+        ProjectTaskService projectTaskService = new ProjectTaskService();
+        return projectTaskService.fetchProjects();
     }
 
     // Fetch all the tasks related to a project
     @AuraEnabled(cacheable=true)
     public static List<TaskList__c> getTasksByProject(Id projectId) {
-        ProjectTaskService projectTrackerService = new ProjectTaskService();
-        return projectTrackerService.fetchTasksByProject(projectId);
+        ProjectTaskService projectTaskService = new ProjectTaskService();
+        return projectTaskService.fetchTasksByProject(projectId);
     }
 
     // Create time entry
-    //@AuraEnabled
-    //public static void createTimeEntry(Id taskId, Date dates, Time fromTime, Time toTime, String description) {
-    //    ProjectTaskService projectTrackerService = new ProjectTaskService();
-    //    projectTrackerService.createTimeEntry(taskId, dates, fromTime, toTime, description);
-    //}
+    @AuraEnabled
+    public static void createTimeEntry(Id taskId, Date dates, Time fromTime, Time toTime, String description) {
+        ProjectTaskService projectTaskService = new ProjectTaskService();
+        projectTaskService.createTimeEntry(taskId, dates, fromTime, toTime, description);
+    }
 
     // Fetch records for the DataTable
     @AuraEnabled(cacheable=true)
     public static List<Time_Entry__c> getRecords(Date startDate, Date endDate) {
-        ProjectTaskService projectTrackerService = new ProjectTaskService();
-        return projectTrackerService.fetchTimeEntries(startDate, endDate);
+        System.debug('startDate and endDate'+startDate +'---'+startDate);
+        ProjectTaskService projectTaskService = new ProjectTaskService();
+        return projectTaskService.fetchTimeEntries(startDate, endDate);
     }
 
     // Fetch favorite tasks for the logged-in user
     @AuraEnabled(cacheable=true)
     public static List<FavroiteTask__c> getFavTasks() {
-        ProjectTaskService projectTrackerService = new ProjectTaskService();
-        return projectTrackerService.fetchFavoriteTasks();
+        ProjectTaskService projectTaskService = new ProjectTaskService();
+        return projectTaskService.fetchFavoriteTasks();
     }
 
-    // Bulk create time entries
-  //  @AuraEnabled
-  //  public static void createTimeEntries(List<Time_Entry__c> timeEntries) {
-  //      ProjectTaskService projectTrackerService = new ProjectTaskService();
- //       projectTrackerService.createTimeEntries(timeEntries);
-  //  }
+    // Bulk create time entries from the dataTable [Fav task]
+    @AuraEnabled
+    public static void createTimeEntries(List<Time_Entry__c> timeEntries) {
+        ProjectTaskService projectTaskService = new ProjectTaskService();
+        projectTaskService.createTimeEntr(timeEntries);
+    }
 }

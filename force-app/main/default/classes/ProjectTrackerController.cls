@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : ChangeMeIn@UserSettingsUnder.SFDoc
  * @group             : 
- * @last modified on  : 11-14-2024
+ * @last modified on  : 11-18-2024
  * @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
 **/
 public with sharing class ProjectTrackerController {
@@ -47,7 +47,7 @@ public with sharing class ProjectTrackerController {
                  startDate = myDate.toStartofWeek();
                  endDate = myDate.toStartofWeek().addDays(6);
                 
-            }
+            }            
         return [
             SELECT  projectName__c, TaskList__c, Date__c, From_Time__c, To_Time__c, Description__c
             FROM Time_Entry__c

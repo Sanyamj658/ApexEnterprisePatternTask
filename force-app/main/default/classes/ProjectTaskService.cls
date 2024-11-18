@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : ChangeMeIn@UserSettingsUnder.SFDoc
+ * @group             : 
+ * @last modified on  : 11-18-2024
+ * @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+**/
 public class ProjectTaskService {
     
     /* -----------------------------------------------------
@@ -23,10 +30,14 @@ public class ProjectTaskService {
     }
     
      /* -----------------------------------------------------
-			3. class me Dobut h Fetch all the Project    
+			3. class me Dobut h Time Entry Create   
      -----------------------------------------------------*/
-    
-    
+    public void createTimeEntry(Id taskId, Date dates, Time fromTime, Time toTime, String description){
+        TaskSelector taskSelector = new TaskSelector();
+		TaskList__c task = taskSelector.getTaskById(taskId);
+        TimeEntryDomain.createTimeEntry(task, dates, fromTime, toTime, description);
+    }  
+	    
     
     
      /* -----------------------------------------------------
@@ -47,4 +58,11 @@ public class ProjectTaskService {
         return FavTask;
     }
 
+     /* -------------------------------------------------------------
+			    6. Create the bulk Time Entries for the Data Table   
+     ---------------------------------------------------------------*/
+        public void createTimeEntr(List<Time_Entry__c> timeEntries) {
+        //TimeEntryDomain TED = new TimeEntryDomain();
+        TimeEntryDomain.createTimeEntr(timeEntries);
+    }
 }

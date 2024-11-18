@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : ChangeMeIn@UserSettingsUnder.SFDoc
+ * @group             : 
+ * @last modified on  : 11-18-2024
+ * @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+**/
 public with sharing class TaskSelector extends fflib_SObjectSelector {
     
     public TaskSelector() {
@@ -33,7 +40,7 @@ public with sharing class TaskSelector extends fflib_SObjectSelector {
         return tasks;
     }
     
-     public TaskList__c existingTask(Id taskId) {
+     public TaskList__c getTaskById(Id taskId) {
               String query = String.format(
             'SELECT {0} FROM {1} WHERE Id = :taskId LIMIT 1', 
             new List<String> {
